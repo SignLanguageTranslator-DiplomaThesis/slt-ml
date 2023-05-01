@@ -1,5 +1,5 @@
 import csv
-import constants
+from model.sign_classifier import constants
 
 
 class CsvParser:
