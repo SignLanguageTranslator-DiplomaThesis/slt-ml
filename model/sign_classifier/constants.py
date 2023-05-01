@@ -1,6 +1,12 @@
 SIGN_LABELS_PATH = "model/sign_classifier/sign_classifier_label.csv"
 WEBCAM_DEVICE_INPUT = 0
 
+# MediaPipe Hands configuration parameters
+MAX_NUMBER_OF_HANDS = 2
+USE_STATIC_IMAGE_MODE = False
+MIN_DETECTION_CONFIDENCE = 0.75
+MIN_TRACKING_CONFIDENCE = 0.6
+
 # Dimension of video capture
 CAPTURE_FRAME_WIDTH = 960
 CAPTURE_FRAME_HEIGHT = 540

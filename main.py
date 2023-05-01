@@ -1,5 +1,4 @@
 import copy
-import argparse
 
 import cv2 as cv
 import mediapipe as mp
@@ -11,32 +10,7 @@ from interface.interface import UserInterface
 from interface.annotations import Annotations
 
 
-def get_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--use_static_image_mode', action='store_true')
-    parser.add_argument("--min_detection_confidence",
-                        help='min_detection_confidence',
-                        type=float,
-                        default=0.7)
-    parser.add_argument("--min_tracking_confidence",
-                        help='min_tracking_confidence',
-                        type=int,
-                        default=0.5)
-
-    args = parser.parse_args()
-
-    return args
-
-
 def main():
-    # Argument parsing
-    args = get_args()
-
-    use_static_image_mode = args.use_static_image_mode
-    min_detection_confidence = args.min_detection_confidence
-    min_tracking_confidence = args.min_tracking_confidence
-
     # Camera preparation
     cap = cv.VideoCapture(constants.WEBCAM_DEVICE_INPUT)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, constants.CAPTURE_FRAME_WIDTH)
@@ -45,10 +19,10 @@ def main():
     # Model load
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
-        static_image_mode=use_static_image_mode,
-        max_num_hands=2,
-        min_detection_confidence=min_detection_confidence,
-        min_tracking_confidence=min_tracking_confidence,
+        static_image_mode=constants.USE_STATIC_IMAGE_MODE,
+        max_num_hands=constants.MAX_NUMBER_OF_HANDS,
+        min_detection_confidence=constants.MIN_DETECTION_CONFIDENCE,
+        min_tracking_confidence=constants.MIN_TRACKING_CONFIDENCE,
     )
 
     sign_classifier = SignClassifier()
