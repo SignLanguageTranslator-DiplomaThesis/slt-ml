@@ -4,8 +4,8 @@ import argparse
 import cv2 as cv
 import mediapipe as mp
 
-import constants
 from model import SignClassifier
+from model.sign_classifier import constants
 from csv_parser.csv_parser import CsvParser
 from interface.interface import UserInterface
 from interface.annotations import Annotations
@@ -163,6 +163,7 @@ def process_landmark(landmark_list):
     # Normalization
     # We divide each value in the list by the maximum absolute value
     max_value = max(map(abs, processed_landmark_list))  # find the maximum absolute value in the list
+
     # Divide each value by the maximum absolute value
     processed_landmark_list = [landmark / max_value for landmark in processed_landmark_list]
 
