@@ -58,8 +58,10 @@ def main():
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
                 # Bounding box calculation
                 brect = Annotations.calc_bounding_rect(debug_image, hand_landmarks)
+                print("Hand_landmarks:")
+                print(hand_landmarks)
                 # Landmark calculation
-                landmark_list = calc_landmark_list(debug_image, hand_landmarks)
+                landmark_list = get_pixel_coord_landmark_list(debug_image, hand_landmarks)
 
                 # Conversion to relative coordinates / normalized coordinates
                 processed_landmark_list = process_landmark(landmark_list)
@@ -107,7 +109,7 @@ def select_mode(key, number, sign_language_labels):
     return number, mode
 
 
-def calc_landmark_list(image, landmarks):
+def get_pixel_coord_landmark_list(image, landmarks):
     image_height, image_width, _ = image.shape
 
     landmark_list = []
