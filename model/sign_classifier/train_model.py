@@ -82,27 +82,58 @@ def create_model():
 
 
 def train_and_evaluate_model(model, x_train, y_train, x_test, y_test):
+    # Used to save the model after each epoch if the validation loss has improved. The saved model can later be used
+    # to make predictions on new data.
     checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-        constants.MODEL_SAVE_PATH, verbose=1, save_weights_only=False)
+        constants.MODEL_SAVE_PATH,
+        verbose=True,
+        save_weights_only=False,
+        save_best_only=True,
+    )
 
-    early_stopping_callback = tf.keras.callbacks.EarlyStopping(patience=20, verbose=1)
+    # Used to stop the training process if the validation loss does not improve after 5 epochs.
+    # This helps prevent over-fitting.
+    early_stopping_callback = tf.keras.callbacks.EarlyStopping(
+        monitor='loss',
+        patience=15,
+        verbose=True
+    )
 
-    # Use a learning rate scheduler to adjust the learning rate during training
-    lr_scheduler_callback = tf.keras.callbacks.ReduceLROnPlateau(factor=0.2, patience=3, min_lr=1e-6)
+    # Used to adjust the learning rate during training if the validation loss has stopped improving.
+    # This can help the model converge to a better solution.
+    lr_scheduler_callback = tf.keras.callbacks.ReduceLROnPlateau(
+        factor=0.2,
+        patience=3,
+        min_lr=1e-6
+    )
 
     model.fit(
         x_train,
         y_train,
-        epochs=250,
-        batch_size=128,
+        epochs=constants.NO_OF_EPOCHS,
+        batch_size=constants.BATCH_SIZE,
         validation_data=(x_test, y_test),
         callbacks=[checkpoint_callback, early_stopping_callback, lr_scheduler_callback]
     )
 
-    val_loss, val_acc = model.evaluate(x_test, y_test, batch_size=128)
-    print('Validation loss:', val_loss)
-    print('Validation accuracy:', val_acc)
-    return val_loss, val_acc
+    loss, accuracy = model.evaluate(x_test, y_test, batch_size=constants.BATCH_SIZE)
+
+    with open(constants.CLASSIFICATION_REPORT_PATH, mode="w") as file:
+        file.write('Validation loss: %.5f\n' % loss)
+        file.write('Validation accuracy: %.5f\n' % accuracy)
+        file.write("\n\n\n")
+
+    model.save(constants.MODEL_SAVE_PATH, include_optimizer=False)
+
+
+# Predicts the output of the test set using the trained model
+def predict_test_output(model, x_test):
+    # Use the predict method to obtain the predicted probabilities for each class for all samples in the test set
+    y_pred_prob = model.predict(x_test)
+    # Obtain the index of the class with the highest predicted probability for each sample, which is the predicted class
+    # label
+    y_pred = np.argmax(y_pred_prob, axis=1)
+    return y_pred
 
 
 # Function to print confusion matrix and classification report
@@ -110,17 +141,22 @@ def save_confusion_matrix(y_true, y_pred, y_test):
     labels_indices = sorted(list(set(y_true)))
     labels = CsvParser().read_sign_labels()
 
-    cmx_data = confusion_matrix(y_true, y_pred, labels=labels_indices)
+    # Compute the confusion matrix using the true labels (y_true), predicted labels (y_pred),
+    # and the list of label indices (labels_indices)
+    confusion_matrix_data = confusion_matrix(y_true, y_pred, labels=labels_indices)
 
-    df_cmx = pd.DataFrame(cmx_data, index=labels, columns=labels)
+    # This line creates a Pandas DataFrame from the confusion matrix data.
+    # It sets the row and column labels to the actual label names (labels).
+    df_cmx = pd.DataFrame(confusion_matrix_data, index=labels, columns=labels)
 
+    # Create a heatmap plot of the confusion matrix using seaborn and matplotlib
     fig, ax = plt.subplots(figsize=(7, 6))
-    sns.heatmap(df_cmx, annot=True, fmt='g', square=False)
+    sns.heatmap(df_cmx, annot=True, fmt='g', square=False, cmap='coolwarm')
     ax.set_ylim(len(set(y_true)), 0)
     plt.savefig(constants.CONFUSION_MATRIX_PATH)
 
     # Generate the Classification Report to a text file
-    with open(constants.CLASSIFICATION_REPORT_PATH, mode="w") as file:
+    with open(constants.CLASSIFICATION_REPORT_PATH, mode="a") as file:
         file.write("Classification Report\n\n\n")
         file.write(classification_report(y_test, y_pred))
 
@@ -134,7 +170,7 @@ def save_as_tflite(model):
     open(constants.TFLITE_SAVE_PATH, 'wb').write(tflite_quantized_model)
 
 
-def classify_landmarks_with_tflite(x_test):
+def classify_test_dataset_with_tflite(x_test):
     interpreter = tf.lite.Interpreter(model_path=constants.TFLITE_SAVE_PATH)
     interpreter.allocate_tensors()
 
@@ -155,23 +191,22 @@ def main():
     x_dataset, y_dataset = load_dataset()
 
     # Split the dataset into training and test sets
-    x_train, x_test, y_train, y_test = train_test_split(x_dataset, y_dataset, train_size=0.75,
+    x_train, x_test, y_train, y_test = train_test_split(x_dataset,
+                                                        y_dataset,
+                                                        train_size=constants.TRAIN_SIZE,
                                                         random_state=constants.RANDOM_SEED)
 
     model = create_model()
 
     train_and_evaluate_model(model, x_train, y_train, x_test, y_test)
 
-    y_pred = model.predict(x_test)
-    y_pred = np.argmax(y_pred, axis=1)
+    y_pred = predict_test_output(model, x_test)
 
     save_confusion_matrix(y_test, y_pred, y_test)
 
-    model.save(constants.MODEL_SAVE_PATH, include_optimizer=False)
-
     save_as_tflite(model)
 
-    classify_landmarks_with_tflite(x_test)
+    classify_test_dataset_with_tflite(x_test)
 
 
 if __name__ == "__main__":

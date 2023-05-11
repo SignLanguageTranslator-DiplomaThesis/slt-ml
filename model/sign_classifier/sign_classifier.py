@@ -29,14 +29,15 @@ class SignClassifier(object):
     tensor that represents the predicted sign language gesture. The index of the highest value in the 
     output tensor is returned as the result.
     
-    Here's a breakdown of the __call__ method:
+    Here's a breakdown of the classify method:
 
     - input_details_tensor_index retrieves the index of the input tensor in the interpreter.
     - self.interpreter.set_tensor sets the input tensor to the landmark_list argument.
     - self.interpreter.invoke() runs the interpreter to produce an output tensor.
     - output_details_tensor_index retrieves the index of the output tensor in the interpreter.
     - self.interpreter.get_tensor retrieves the output tensor.
-    - result_index finds the index of the highest value in the output tensor, which represents the predicted sign language gesture.
+    - result_index finds the index of the highest value in the output tensor, which represents the predicted sign 
+    language gesture.
     """
     def classify(self, landmark_list):
         input_tensor_index = self.input_details[0]['index']

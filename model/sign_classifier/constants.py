@@ -11,8 +11,14 @@ MIN_TRACKING_CONFIDENCE = 0.6
 CAPTURE_FRAME_WIDTH = 960
 CAPTURE_FRAME_HEIGHT = 540
 
+# Model configuration constants
+
 # Set a random seed for reproducibility
 RANDOM_SEED = 42
+# The size of the training dataset, as a percentage from the total dataset
+TRAIN_SIZE = 0.8
+NO_OF_EPOCHS = 250
+BATCH_SIZE = 128
 
 # Set the path to the dataset, model and tflite files
 DATASET_PATH = 'model/sign_classifier/sign_dataset.csv'
