@@ -1,12 +1,5 @@
-import os.path
 import sys
-
-directory = os.path.dirname(os.path.abspath("__file__"))
-sys.path.append(directory)
-
-import constants
-from csv_parser.csv_parser import CsvParser
-
+import os.path
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -15,15 +8,29 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
 
+directory = os.path.dirname(os.path.abspath("__file__"))
+sys.path.append(directory)
 
-# Load the dataset of hand landmarks and labels from the CSV file
+import constants
+from csv_parser.csv_parser import CsvParser
+
+
 def load_dataset():
-    # features = the normalized relative coordinates of the 21 hand landmarks
+    """
+    Load the dataset of hand landmark coordinates and labels from the CSV file.
+
+    x_dataset - features - the normalized relative coordinates of the 21 hand landmarks
+
+    y_dataset - labels = the label of the sign language gesture
+
+    :return tuple: The created datasets.
+    """
+
     x_dataset = np.loadtxt(constants.DATASET_PATH,
                            delimiter=',',
                            dtype='float32',
                            usecols=list(range(1, constants.NO_OF_LANDMARK_COORDINATES + 1)))
-    # labels = the label of the sign language gesture
+
     y_dataset = np.loadtxt(constants.DATASET_PATH,
                            delimiter=',',
                            dtype='int32',
@@ -31,8 +38,32 @@ def load_dataset():
     return x_dataset, y_dataset
 
 
-# Defines the layers of the deep neural network model and compiles the model
-def create_model():
+def save_model_architecture(model):
+    """
+    Saves the summary of the architecture of the model and creates a plot of the neural network graph
+
+    :param tf.keras.models.Sequential model: The created model.
+    """
+
+    # Print a summary of the model's architecture
+    with open(constants.MODEL_SUMMARY_PATH, mode="w") as file:
+        model.summary(print_fn=lambda x: file.write(x + '\n'))
+
+    # Create a plot of the neural network graph, to visualise the model
+    tf.keras.utils.plot_model(model,
+                              to_file=constants.NEURAL_NETWORK_VISUALIZATION_PATH,
+                              show_shapes=True,
+                              show_layer_names=True,
+                              show_layer_activations=True)
+
+
+def build_model():
+    """
+    Defines the architecture (layers) of the deep neural network model and compiles it.
+
+    :return tf.keras.models.Sequential: The created model.
+    """
+
     # Define the architecture of the model
     model = tf.keras.models.Sequential(
         layers=[
@@ -58,16 +89,7 @@ def create_model():
         name="sign_classifier"
     )
 
-    # Print a summary of the model's architecture
-    with open(constants.MODEL_SUMMARY_PATH, mode="w") as file:
-        model.summary(print_fn=lambda x: file.write(x + '\n'))
-
-    # Create a plot of the neural network graph, to visualise the model
-    tf.keras.utils.plot_model(model,
-                              to_file=constants.NEURAL_NETWORK_VISUALIZATION_PATH,
-                              show_shapes=True,
-                              show_layer_names=True,
-                              show_layer_activations=True)
+    save_model_architecture(model)
 
     # The model is compiled with:
     # -> Adam optimizer                                 = a stochastic gradient descent optimization algorithm;
@@ -82,6 +104,17 @@ def create_model():
 
 
 def train_and_evaluate_model(model, x_train, y_train, x_test, y_test):
+    """
+    Trains the model with the fit() function on the train data, with several callbacks,
+    then evaluates it on the test data. Saves the model to a specified path.
+
+    :param tf.keras.models.Sequential model: The neural network model.
+    :param numpy.ndarray x_train: Training dataset.
+    :param numpy.ndarray y_train: Set of labels for all the data in x_train.
+    :param numpy.ndarray x_test: Test dataset.
+    :param numpy.ndarray y_test: Set of labels for all the data in x_test.
+    """
+
     # Used to save the model after each epoch if the validation loss has improved. The saved model can later be used
     # to make predictions on new data.
     checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
@@ -126,8 +159,16 @@ def train_and_evaluate_model(model, x_train, y_train, x_test, y_test):
     model.save(constants.MODEL_SAVE_PATH, include_optimizer=False)
 
 
-# Predicts the output of the test set using the trained model
 def predict_test_output(model, x_test):
+    """
+    Predicts the output of the test set using the trained model.
+
+    :param tf.keras.models.Sequential model: Neural network model.
+    :param numpy.ndarray x_test: Test data set.
+
+    :return numpy.ndarray: Predicted class label.
+    """
+
     # Use the predict method to obtain the predicted probabilities for each class for all samples in the test set
     y_pred_prob = model.predict(x_test)
     # Obtain the index of the class with the highest predicted probability for each sample, which is the predicted class
@@ -136,8 +177,14 @@ def predict_test_output(model, x_test):
     return y_pred
 
 
-# Function to print confusion matrix and classification report
-def save_confusion_matrix(y_true, y_pred, y_test):
+def generate_confusion_matrix(y_true, y_pred):
+    """
+    Generates the confusion matrix that is used to define the performance of the classification algorithm.
+
+    :param numpy.ndarray y_true: True labels.
+    :param numpy.ndarray y_pred: Predicted labels.
+    """
+
     labels_indices = sorted(list(set(y_true)))
     labels = CsvParser().read_sign_labels()
 
@@ -145,7 +192,7 @@ def save_confusion_matrix(y_true, y_pred, y_test):
     # and the list of label indices (labels_indices)
     confusion_matrix_data = confusion_matrix(y_true, y_pred, labels=labels_indices)
 
-    # This line creates a Pandas DataFrame from the confusion matrix data.
+    # Create a Pandas DataFrame from the confusion matrix data.
     # It sets the row and column labels to the actual label names (labels).
     df_cmx = pd.DataFrame(confusion_matrix_data, index=labels, columns=labels)
 
@@ -155,33 +202,62 @@ def save_confusion_matrix(y_true, y_pred, y_test):
     ax.set_ylim(len(set(y_true)), 0)
     plt.savefig(constants.CONFUSION_MATRIX_PATH)
 
-    # Generate the Classification Report to a text file
+
+def generate_classification_report(y_test, y_pred):
+    """
+    Generate the Classification Report to a text file.
+
+    :param numpy.ndarray y_test: Set of labels for all the data in x_test.
+    :param numpy.ndarray y_pred: Predicted labels.
+    """
+
     with open(constants.CLASSIFICATION_REPORT_PATH, mode="a") as file:
         file.write("Classification Report\n\n\n")
         file.write(classification_report(y_test, y_pred))
 
 
-# Function to convert and save the model as TFLite
 def save_as_tflite(model):
+    """
+    Convert and save the neural network model as TFLite.
+
+    :param tf.keras.models.Sequential model: Neural network model.
+    """
+
+    # Creates a TFLite converter object and initializes it with the trained TensorFlow model
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    # Applies a set of default optimizations to improve the performance of the converted model
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_quantized_model = converter.convert()
 
-    open(constants.TFLITE_SAVE_PATH, 'wb').write(tflite_quantized_model)
+    with open(constants.TFLITE_SAVE_PATH, 'wb') as file:
+        file.write(tflite_quantized_model)
 
 
 def classify_test_dataset_with_tflite(x_test):
+    """
+    Use a TFLite interpreter to classify the test dataset by performing inference on the TFLite model.
+
+    :param numpy.ndarray x_test: Test dataset.
+    """
+
+    # Create a TFLite interpreter and allocate tensors
     interpreter = tf.lite.Interpreter(model_path=constants.TFLITE_SAVE_PATH)
     interpreter.allocate_tensors()
 
+    # Get input and output details from the interpreter
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
 
+    # Set the input tensor with the first sample from the test dataset
     interpreter.set_tensor(input_details[0]['index'], np.array([x_test[0]]))
 
+    # Invoke the interpreter to perform inference
     interpreter.invoke()
+
+    # Get the output tensor from the interpreter
     tflite_results = interpreter.get_tensor(output_details[0]['index'])
 
+    # Print the results
     print(np.squeeze(tflite_results))
     print(np.argmax(np.squeeze(tflite_results)))
 
@@ -196,13 +272,13 @@ def main():
                                                         train_size=constants.TRAIN_SIZE,
                                                         random_state=constants.RANDOM_SEED)
 
-    model = create_model()
+    model = build_model()
 
     train_and_evaluate_model(model, x_train, y_train, x_test, y_test)
 
     y_pred = predict_test_output(model, x_test)
-
-    save_confusion_matrix(y_test, y_pred, y_test)
+    generate_confusion_matrix(y_test, y_pred)
+    generate_classification_report(y_test, y_pred)
 
     save_as_tflite(model)
 
