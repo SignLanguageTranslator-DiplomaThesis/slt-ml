@@ -42,7 +42,8 @@ class Model:
     def __init__(self):
         self.model = self.build()
 
-    def build(self):
+    @staticmethod
+    def build():
         """
         Defines the architecture (layers) of the deep neural network model and compiles it.
 
@@ -74,8 +75,6 @@ class Model:
             name="sign_classifier"
         )
 
-        self.save_architecture()
-
         # The model is compiled with:
         # -> Adam optimizer                                 = a stochastic gradient descent optimization algorithm;
         # -> sparse categorical cross-entropy loss function = used for multi-class classification problems.
@@ -90,8 +89,6 @@ class Model:
     def save_architecture(self):
         """
         Saves the summary of the architecture of the model and creates a plot of the neural network graph
-
-        :param tf.keras.models.Sequential model: The created model.
         """
 
         # Print a summary of the model's architecture
@@ -110,7 +107,6 @@ class Model:
         Trains the model with the fit() function on the train data, with several callbacks,
         then evaluates it on the test data. Saves the model to a specified path.
 
-        :param tf.keras.models.Sequential model: The neural network model.
         :param numpy.ndarray x_train: Training dataset.
         :param numpy.ndarray y_train: Set of labels for all the data in x_train.
         :param numpy.ndarray x_test: Test dataset.
@@ -160,6 +156,7 @@ class Model:
             file.write("\n\n\n")
 
     def save(self):
+        self.save_architecture()
         self.model.save(constants.MODEL_SAVE_PATH, include_optimizer=False)
 
     def save_as_tflite(self):
