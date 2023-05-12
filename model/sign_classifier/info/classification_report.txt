@@ -1,5 +1,5 @@
-Validation loss: 0.19342
-Validation accuracy: 0.94034
+Validation loss: 0.10493
+Validation accuracy: 0.96693
 
 
 
@@ -8,13 +8,13 @@ Classification Report
 
               precision    recall  f1-score   support
 
-           0       0.95      0.98      0.96       322
-           1       1.00      0.90      0.95       286
-           2       0.92      0.99      0.95       288
-           3       0.74      0.95      0.83        61
-           4       1.00      0.93      0.97        60
-           5       1.00      0.54      0.70        39
+           0       0.99      0.97      0.98       321
+           1       0.99      0.94      0.96       303
+           2       0.93      0.99      0.96       271
+           3       0.91      0.97      0.94        71
+           4       1.00      1.00      1.00        18
+           5       1.00      1.00      1.00        14
 
-    accuracy                           0.94      1056
-   macro avg       0.93      0.88      0.89      1056
-weighted avg       0.95      0.94      0.94      1056
+    accuracy                           0.97       998
+   macro avg       0.97      0.98      0.97       998
+weighted avg       0.97      0.97      0.97       998
