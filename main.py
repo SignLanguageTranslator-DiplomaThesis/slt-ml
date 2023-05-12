@@ -30,11 +30,11 @@ def main():
     # Read labels from sign_classifier_label CSV file
     sign_language_labels = CsvParser.read_sign_labels()
 
-    number = -1
+    number = constants.NOT_SELECTED
 
     while cap.isOpened():
         key = cv.waitKey(10)
-        if key == 27:  # ESC
+        if key == constants.ESC_KEY:
             break
         number, mode = select_mode(key, number, sign_language_labels)
 
@@ -92,26 +92,21 @@ def main():
 
 def select_mode(key, number, sign_language_labels):
     user_interface = UserInterface()
-    mode = -1
-    if key == 110:  # n - normal mode
-        mode = 0
-    elif key == 107:  # k - save new data in the dataset
-        mode = 1
-    elif key == 115:  # s - choose sign gesture (label) to perform
+    mode = constants.NOT_SELECTED
+    if key == constants.CHOOSE_LABEL_MODE:
         user_interface.generate_label_dropdown(sign_language_labels)
         number = user_interface.selected_label_index
-        mode = 2
-        print(number)
-    elif key == 108:  # l - save new label in the CSV file
+    elif key == constants.CREATE_LABEL_MODE:
         user_interface.generate_input_field(sign_language_labels)
-        mode = 3
+    if key in constants.modes:
+        mode = key
     return number, mode
 
 
 def get_pixel_coord_landmark_list(image, landmarks):
     image_height, image_width, _ = image.shape
 
-    landmark_list = []
+    pixel_landmarks = []
 
     # Iterate through each landmark point
     for landmark in landmarks.landmark:
@@ -120,26 +115,26 @@ def get_pixel_coord_landmark_list(image, landmarks):
         landmark_y = int(landmark.y * image_height)
 
         # Append the pixel coordinates to the landmark list
-        landmark_list.append([landmark_x, landmark_y])
+        pixel_landmarks.append([landmark_x, landmark_y])
 
-    return landmark_list
+    return pixel_landmarks
 
 
-def normalize_landmarks(landmark_list):
+def normalize_landmarks(landmarks):
     normalized_landmarks = []
 
-    min_landmark_x = min(landmark_list, key=lambda landmark: landmark[0])[0]
-    min_landmark_y = min(landmark_list, key=lambda landmark: landmark[1])[1]
+    min_landmark_x = min(landmarks, key=lambda landmark: landmark[0])[0]
+    min_landmark_y = min(landmarks, key=lambda landmark: landmark[1])[1]
 
-    max_landmark_x = max(landmark_list, key=lambda landmark: landmark[0])[0]
-    max_landmark_y = max(landmark_list, key=lambda landmark: landmark[1])[1]
+    max_landmark_x = max(landmarks, key=lambda landmark: landmark[0])[0]
+    max_landmark_y = max(landmarks, key=lambda landmark: landmark[1])[1]
 
     # Calculate the range of x and y values
     x_range = max_landmark_x - min_landmark_x
     y_range = max_landmark_y - min_landmark_y
 
     # Convert to relative coordinates and normalize
-    for landmark_point in landmark_list:
+    for landmark_point in landmarks:
         x, y = landmark_point
         relative_x = (x - min_landmark_x) / x_range
         relative_y = (y - min_landmark_y) / y_range

@@ -2,6 +2,8 @@ import cv2 as cv
 import numpy as np
 import mediapipe as mp
 
+from model.sign_classifier import constants
+
 
 class Annotations:
     @staticmethod
@@ -49,9 +51,19 @@ class Annotations:
 
     @staticmethod
     def draw_info(image, mode):
-        mode_string = ['Save Snapshot', 'Choose Sign to Perform', 'Create New Sign Label']
+        mode_string = {
+            constants.SAVE_SNAPSHOT_MODE: "Save Snapshot",
+            constants.CREATE_LABEL_MODE: "Create New Sign Label",
+            constants.CHOOSE_LABEL_MODE: "Choose Sign to Perform",
+            constants.NORMAL_MODE: "Normal Mode"
+        }
         if mode > 0:
-            cv.putText(image, "MODE:" + mode_string[mode - 1], (10, 90),
-                       cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
+            cv.putText(image,
+                       "MODE:" + mode_string[mode],
+                       (10, 90),
+                       cv.FONT_HERSHEY_SIMPLEX,
+                       0.6,
+                       (255, 255, 255),
+                       1,
                        cv.LINE_AA)
         return image

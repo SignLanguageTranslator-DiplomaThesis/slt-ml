@@ -17,7 +17,7 @@ class CsvParser:
 
     @staticmethod
     def logging_csv(mode, number, landmark_list):
-        if mode == 1 and number != -1:
+        if mode == constants.SAVE_SNAPSHOT_MODE and number != -1:
             csv_path = 'model/sign_classifier/sign_dataset.csv'
             with open(csv_path, 'a', newline="") as f:
                 writer = csv.writer(f)
