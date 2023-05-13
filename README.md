@@ -6,6 +6,8 @@ Model that recognizes and classifies various sign language gestures.
 
 1. Create a virtual environment and install dependencies
 
+    Coded with `Python 3.10.8`.
+
     Install `virtualenv`:
     ```
     pip install virtualenv
