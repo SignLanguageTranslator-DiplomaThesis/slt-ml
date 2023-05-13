@@ -1,6 +1,8 @@
 import numpy as np
 import tensorflow as tf
 
+from constants import constants
+
 
 class SignClassifier(object):
 
@@ -13,7 +15,7 @@ class SignClassifier(object):
     """
     def __init__(
         self,
-        model_path='model/sign_classifier/sign_classifier.tflite',
+        model_path=constants.TFLITE_SAVE_PATH,
         num_threads=1,
     ):
         self.interpreter = tf.lite.Interpreter(model_path=model_path,

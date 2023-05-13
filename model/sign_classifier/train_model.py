@@ -1,5 +1,3 @@
-import sys
-import os.path
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -7,11 +5,9 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
+import tensorflowjs
 
-directory = os.path.dirname(os.path.abspath("__file__"))
-sys.path.append(directory)
-
-import constants
+from constants import constants
 from csv_parser.csv_parser import CsvParser
 
 
@@ -173,6 +169,9 @@ class Model:
         with open(constants.TFLITE_SAVE_PATH, 'wb') as file:
             file.write(tflite_quantized_model)
 
+    def save_as_js(self):
+        tensorflowjs.converters.save_keras_model(self.model, constants.SAVED_MODELS_DIR)
+
     def predict_test_output(self, x_test):
         """
         Predicts the output of the test set using the trained model.
@@ -279,6 +278,7 @@ def main():
     model.generate_classification_report(y_test, y_pred)
 
     model.save_as_tflite()
+    model.save_as_js()
 
     classify_test_dataset_with_tflite(x_test)
 

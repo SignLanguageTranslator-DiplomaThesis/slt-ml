@@ -1,4 +1,3 @@
-SIGN_LABELS_PATH = "model/sign_classifier/sign_classifier_label.csv"
 WEBCAM_DEVICE_INPUT = 0
 
 # MediaPipe Hands configuration parameters
@@ -20,10 +19,15 @@ TRAIN_SIZE = 0.8
 NO_OF_EPOCHS = 250
 BATCH_SIZE = 128
 
-# Set the path to the dataset, model and tflite files
-DATASET_PATH = 'model/sign_classifier/sign_dataset.csv'
-MODEL_SAVE_PATH = 'model/sign_classifier/sign_classifier.hdf5'
-TFLITE_SAVE_PATH = 'model/sign_classifier/sign_classifier.tflite'
+SAVED_MODELS_DIR = 'model/sign_classifier/save'
+
+# Paths to the datasets
+DATASET_PATH = 'model/sign_classifier/dataset/sign_dataset.csv'
+SIGN_LABELS_PATH = "model/sign_classifier/dataset/sign_classifier_label.csv"
+
+# Paths to the saved models
+MODEL_SAVE_PATH = 'model/sign_classifier/save/sign_classifier.hdf5'
+TFLITE_SAVE_PATH = 'model/sign_classifier/save/sign_classifier.tflite'
 
 # Paths for ML model information
 MODEL_SUMMARY_PATH = 'model/sign_classifier/info/model_summary.txt'
