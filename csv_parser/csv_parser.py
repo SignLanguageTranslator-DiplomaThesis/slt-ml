@@ -7,7 +7,7 @@ class CsvParser:
     def __init__(self):
         pass
 
-    # DF: Appends a new label inserted by the user to the sign_classifier_label.csv file
+    # DF: Appends a new label inserted by the user to the [initial]_sign_label.csv file
     @staticmethod
     def write_label_to_csv(data, sign_language_labels):
         sign_language_labels.extend(data)
@@ -18,8 +18,7 @@ class CsvParser:
     @staticmethod
     def logging_csv(mode, number, landmark_list):
         if mode == constants.SAVE_SNAPSHOT_MODE and number != -1:
-            csv_path = 'model/sign_classifier/sign_dataset.csv'
-            with open(csv_path, 'a', newline="") as f:
+            with open(constants.DATASET_PATH, 'a', newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow([number, *landmark_list])
         return

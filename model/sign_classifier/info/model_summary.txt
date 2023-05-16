@@ -21,10 +21,10 @@ _________________________________________________________________
  batch_normalization_3 (Batc  (None, 32)               128       
  hNormalization)                                                 
                                                                  
- output_sign_label (Dense)   (None, 6)                 198       
+ output_sign_label (Dense)   (None, 26)                858       
                                                                  
 =================================================================
-Total params: 16,934
-Trainable params: 16,486
+Total params: 17,594
+Trainable params: 17,146
 Non-trainable params: 448
 _________________________________________________________________

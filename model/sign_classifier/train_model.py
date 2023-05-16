@@ -223,9 +223,10 @@ class Model:
         :param numpy.ndarray y_pred: Predicted labels.
         """
 
+        labels = CsvParser().read_sign_labels()
         with open(constants.CLASSIFICATION_REPORT_PATH, mode="a") as file:
             file.write("Classification Report\n\n\n")
-            file.write(classification_report(y_test, y_pred))
+            file.write(classification_report(y_test, y_pred, target_names=labels))
 
 
 def classify_test_dataset_with_tflite(x_test):

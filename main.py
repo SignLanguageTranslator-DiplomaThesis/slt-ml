@@ -60,8 +60,6 @@ def main():
                 # Landmark calculation
                 coordinate_converter = CoordinateConverter(hand_landmarks)
                 coordinate_converter.convert_to_pixel(edit_image)
-
-                # Conversion to relative, normalized coordinates
                 coordinate_converter.convert_to_relative_and_normalize()
 
                 # Bounding box calculation

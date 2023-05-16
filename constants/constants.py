@@ -16,14 +16,15 @@ CAPTURE_FRAME_HEIGHT = 540
 RANDOM_SEED = 42
 # The size of the training dataset, as a percentage from the total dataset
 TRAIN_SIZE = 0.8
-NO_OF_EPOCHS = 250
+NO_OF_EPOCHS = 500
 BATCH_SIZE = 128
 
 SAVED_MODELS_DIR = 'model/sign_classifier/save'
 
 # Paths to the datasets
-DATASET_PATH = 'model/sign_classifier/dataset/sign_dataset.csv'
-SIGN_LABELS_PATH = "model/sign_classifier/dataset/sign_classifier_label.csv"
+DATASET_PATH = 'model/sign_classifier/dataset/[initial]_sign_dataset.csv'
+
+SIGN_LABELS_PATH = "model/sign_classifier/dataset/sign_label.csv"
 
 # Paths to the saved models
 MODEL_SAVE_PATH = 'model/sign_classifier/save/sign_classifier.hdf5'
@@ -36,7 +37,7 @@ CLASSIFICATION_REPORT_PATH = 'model/sign_classifier/info/classification_report.t
 NEURAL_NETWORK_VISUALIZATION_PATH = 'model/sign_classifier/info/sign_classifier_model.png'
 
 # Define the number of classes (labels) in the dataset
-NO_OF_CLASSES = 6
+NO_OF_CLASSES = 26
 
 NO_OF_LANDMARKS = 21
 NO_OF_LANDMARK_COORDINATES = 42
