@@ -22,7 +22,7 @@ BATCH_SIZE = 128
 SAVED_MODELS_DIR = 'model/sign_classifier/save'
 
 # Paths to the datasets
-DATASET_PATH = 'model/sign_classifier/dataset/[initial]_sign_dataset.csv'
+DATASET_PATH = 'model/sign_classifier/dataset/sign_dataset.csv'
 
 SIGN_LABELS_PATH = "model/sign_classifier/dataset/sign_label.csv"
 
@@ -33,22 +33,30 @@ TFLITE_SAVE_PATH = 'model/sign_classifier/save/sign_classifier.tflite'
 # Paths for ML model information
 MODEL_SUMMARY_PATH = 'model/sign_classifier/info/model_summary.txt'
 CONFUSION_MATRIX_PATH = 'model/sign_classifier/info/confusion_matrix.png'
+ACCURACY_LOSS_PLOT_PATH = 'model/sign_classifier/info/results.png'
 CLASSIFICATION_REPORT_PATH = 'model/sign_classifier/info/classification_report.txt'
 NEURAL_NETWORK_VISUALIZATION_PATH = 'model/sign_classifier/info/sign_classifier_model.png'
 
-# Define the number of classes (labels) in the dataset
+# Define the number of classes (labels) in the dataset - 26 letters in the American Alphabet
 NO_OF_CLASSES = 26
 
 NO_OF_LANDMARKS = 21
 NO_OF_LANDMARK_COORDINATES = 42
 
 # Desktop application modes
-SAVE_SNAPSHOT_MODE = 115    # S
-CREATE_LABEL_MODE = 108     # L
-CHOOSE_LABEL_MODE = 99      # C
-NORMAL_MODE = 110           # N
+SAVE_SNAPSHOT_MODE = 115  # S
+CREATE_LABEL_MODE = 108  # L
+CHOOSE_LABEL_MODE = 99  # C
+NORMAL_MODE = 110  # N
 NOT_SELECTED = -1
 
 modes = [SAVE_SNAPSHOT_MODE, CREATE_LABEL_MODE, CHOOSE_LABEL_MODE, NORMAL_MODE]
 
 ESC_KEY = 27
+
+# IMAGE DATASET
+TRAIN_DATASET_PATH = r'C:\Users\denis\OneDrive\Documents\UTCN\licenta\dataset\asl'
+TEST_DATASET_PATH = r'C:\Users\denis\OneDrive\Documents\UTCN\licenta\dataset\asl_alphabet_test\asl_alphabet_test'
+
+IMAGE_CLASSES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+                 'U', 'V', 'W', 'X', 'Y', 'Z']

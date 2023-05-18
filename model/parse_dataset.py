@@ -8,6 +8,7 @@ from csv_parser.csv_parser import CsvParser
 from coordinates.coordinates import CoordinateConverter
 
 JPG = '.jpg'
+JPEG = '.jpeg'
 PNG = '.png'
 HORIZONTAL_AXIS = 1
 
@@ -54,7 +55,7 @@ def parse_letter_directory(path, sign_index):
     )
 
     for filename in os.listdir(path):
-        if filename.endswith(JPG) or filename.endswith(PNG):
+        if filename.endswith(JPEG) or filename.endswith(JPG) or filename.endswith(PNG):
             image_path = os.path.join(path, filename)
             image = cv.imread(image_path)
 
@@ -82,10 +83,12 @@ def parse_all_letters():
         if os.path.isdir(path):
             letter = os.path.basename(path)
             if len(letter) == 1 and letter.isalpha():
+                letter = letter.upper()
                 sign_index = sign_language_labels.index(letter)
                 print(letter)
                 parse_letter_directory(path, sign_index)
 
 
 if __name__ == "__main__":
+    # parse_letter_directory(r"C:\Users\denis\OneDrive\Documents\UTCN\licenta\dataset\asl_alphabet_train\asl_alphabet_train\Q", 16)
     parse_all_letters()

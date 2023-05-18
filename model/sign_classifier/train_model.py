@@ -36,6 +36,7 @@ def load_dataset():
 
 class Model:
     def __init__(self):
+        self.history = None
         self.model = self.build()
 
     @staticmethod
@@ -46,30 +47,26 @@ class Model:
         :return tf.keras.models.Sequential: The created model.
         """
 
-        # Define the architecture of the model
-        model = tf.keras.models.Sequential(
-            layers=[
-                # input shape of the model - the number of landmark coordinates
-                tf.keras.layers.Input((constants.NO_OF_LANDMARK_COORDINATES,), name="input_landmark_coordinates"),
-                # randomly drops out some input units with a probability of 0.2 during training,
-                # which helps to prevent over-fitting
-                tf.keras.layers.Dropout(0.2, name="dropout_1"),
-                # performs a linear transformation on the input data, followed by the ReLU activation function to
-                # introduce non-linearity
-                tf.keras.layers.Dense(128, activation='relu', use_bias=True, name="dense_1"),
-                # normalizes the activations of the previous layer at each batch,
-                # which helps improve training speed and generalization
-                tf.keras.layers.BatchNormalization(name="batch_normalization_1"),
-                # randomly drops out some input units with a probability of 0.4 during training
-                tf.keras.layers.Dropout(0.4, name="dropout_2"),
-                tf.keras.layers.Dense(64, activation='relu', use_bias=True, name="dense_2"),
-                tf.keras.layers.BatchNormalization(name="batch_normalization_2"),
-                tf.keras.layers.Dense(32, activation='relu', use_bias=True, name="dense_3"),
-                tf.keras.layers.BatchNormalization(name="batch_normalization_3"),
-                tf.keras.layers.Dense(constants.NO_OF_CLASSES, activation='softmax', name="output_sign_label")
-            ],
-            name="sign_classifier"
-        )
+        model = tf.keras.models.Sequential([
+            # input shape of the model - the number of landmark coordinates
+            tf.keras.layers.Input(shape=(constants.NO_OF_LANDMARK_COORDINATES,), name="input_landmark_coordinates"),
+            # performs a linear transformation on the input data, followed by the ReLU activation function to
+            # introduce non-linearity
+            tf.keras.layers.Dense(128, activation='relu', use_bias=True),
+            # normalizes the activations of the previous layer at each batch,
+            # which helps improve training speed and generalization
+            tf.keras.layers.BatchNormalization(),
+            # randomly drops out some input units with a probability of 0.2 during training,
+            # which helps to prevent over-fitting
+            tf.keras.layers.Dropout(0.2),
+            tf.keras.layers.Dense(64, activation='relu', use_bias=True),
+            tf.keras.layers.BatchNormalization(),
+            tf.keras.layers.Dropout(0.2),
+            tf.keras.layers.Dense(32, activation='relu', use_bias=True),
+            tf.keras.layers.BatchNormalization(),
+            tf.keras.layers.Dropout(0.2),
+            tf.keras.layers.Dense(constants.NO_OF_CLASSES, activation='softmax', name="output_sign_label")
+        ], name="sign_classifier")
 
         # The model is compiled with:
         # -> Adam optimizer                                 = a stochastic gradient descent optimization algorithm;
@@ -134,7 +131,7 @@ class Model:
             min_lr=1e-6
         )
 
-        self.model.fit(
+        self.history = self.model.fit(
             x_train,
             y_train,
             epochs=constants.NO_OF_EPOCHS,
@@ -187,6 +184,24 @@ class Model:
         # predicted class label
         y_pred = np.argmax(y_pred_prob, axis=1)
         return y_pred
+
+    def plot_results(self):
+        fig, axes = plt.subplots(2, 1, figsize=(12, 12))
+
+        axes[0].plot(self.history.history['accuracy'], label='train_accuracy')
+        axes[0].plot(self.history.history['val_accuracy'], label='val_accuracy')
+        axes[0].set_xlabel('epoch')
+        axes[0].set_ylabel('accuracy')
+        axes[0].legend()
+
+        axes[1].plot(self.history.history['loss'], label='train_loss')
+        axes[1].plot(self.history.history['val_loss'], label='val_loss')
+        axes[1].set_xlabel('epoch')
+        axes[1].set_ylabel('loss')
+        axes[1].legend()
+
+        plt.tight_layout()
+        plt.savefig(constants.ACCURACY_LOSS_PLOT_PATH)
 
     @staticmethod
     def generate_confusion_matrix(y_true, y_pred):
@@ -275,6 +290,7 @@ def main():
 
     y_pred = model.predict_test_output(x_test)
 
+    model.plot_results()
     model.generate_confusion_matrix(y_test, y_pred)
     model.generate_classification_report(y_test, y_pred)
 

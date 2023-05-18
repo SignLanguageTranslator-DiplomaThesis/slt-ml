@@ -2,26 +2,28 @@ Model: "sign_classifier"
 _________________________________________________________________
  Layer (type)                Output Shape              Param #   
 =================================================================
- dropout_1 (Dropout)         (None, 42)                0         
+ dense (Dense)               (None, 128)               5504      
                                                                  
- dense_1 (Dense)             (None, 128)               5504      
+ batch_normalization (BatchN  (None, 128)              512       
+ ormalization)                                                   
                                                                  
- batch_normalization_1 (Batc  (None, 128)              512       
+ dropout (Dropout)           (None, 128)               0         
+                                                                 
+ dense_1 (Dense)             (None, 64)                8256      
+                                                                 
+ batch_normalization_1 (Batc  (None, 64)               256       
  hNormalization)                                                 
                                                                  
- dropout_2 (Dropout)         (None, 128)               0         
+ dropout_1 (Dropout)         (None, 64)                0         
                                                                  
- dense_2 (Dense)             (None, 64)                8256      
+ dense_2 (Dense)             (None, 32)                2080      
                                                                  
- batch_normalization_2 (Batc  (None, 64)               256       
+ batch_normalization_2 (Batc  (None, 32)               128       
  hNormalization)                                                 
                                                                  
- dense_3 (Dense)             (None, 32)                2080      
+ dropout_2 (Dropout)         (None, 32)                0         
                                                                  
- batch_normalization_3 (Batc  (None, 32)               128       
- hNormalization)                                                 
-                                                                 
- output_sign_label (Dense)   (None, 26)                858       
+ dense_3 (Dense)             (None, 26)                858       
                                                                  
 =================================================================
 Total params: 17,594
