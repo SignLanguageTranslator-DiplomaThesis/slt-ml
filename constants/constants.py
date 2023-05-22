@@ -58,5 +58,8 @@ ESC_KEY = 27
 TRAIN_DATASET_PATH = r'C:\Users\denis\OneDrive\Documents\UTCN\licenta\dataset\asl'
 TEST_DATASET_PATH = r'C:\Users\denis\OneDrive\Documents\UTCN\licenta\dataset\asl_alphabet_test\asl_alphabet_test'
 
-IMAGE_CLASSES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-                 'U', 'V', 'W', 'X', 'Y', 'Z']
+LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+           'U', 'V', 'W', 'X', 'Y', 'Z']
+
+# Model for recognition of action-based sign language gestures
+ACTIONS = []

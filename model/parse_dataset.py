@@ -90,5 +90,5 @@ def parse_all_letters():
 
 
 if __name__ == "__main__":
-    # parse_letter_directory(r"C:\Users\denis\OneDrive\Documents\UTCN\licenta\dataset\asl_alphabet_train\asl_alphabet_train\Q", 16)
-    parse_all_letters()
+    parse_letter_directory(r"C:\Users\denis\OneDrive\Documents\UTCN\licenta\dataset\asl_alphabet_train\asl_alphabet_train\X", constants.LETTERS.index('X'))
+    # parse_all_letters()
