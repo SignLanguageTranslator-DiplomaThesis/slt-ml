@@ -38,7 +38,7 @@ CLASSIFICATION_REPORT_PATH = 'model/sign_classifier/info/classification_report.t
 NEURAL_NETWORK_VISUALIZATION_PATH = 'model/sign_classifier/info/sign_classifier_model.png'
 
 # Define the number of classes (labels) in the dataset - 26 letters in the American Alphabet + space
-NO_OF_CLASSES = 27
+NO_OF_CLASSES = 29
 
 NO_OF_LANDMARKS = 21
 NO_OF_LANDMARK_COORDINATES = 42

@@ -23,10 +23,10 @@ _________________________________________________________________
                                                                  
  dropout_2 (Dropout)         (None, 32)                0         
                                                                  
- output_sign_label (Dense)   (None, 27)                891       
+ output_sign_label (Dense)   (None, 29)                957       
                                                                  
 =================================================================
-Total params: 17,627
-Trainable params: 17,179
+Total params: 17,693
+Trainable params: 17,245
 Non-trainable params: 448
 _________________________________________________________________
