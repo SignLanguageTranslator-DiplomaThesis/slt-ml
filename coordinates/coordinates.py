@@ -10,11 +10,11 @@ class CoordinateConverter:
         # Iterate through each landmark point
         for landmark in self.initial_landmarks.landmark:
             # Convert landmark coordinates from normalized [0, 1] to pixel coordinates
-            landmark_x = int(landmark.x * image_width)
-            landmark_y = int(landmark.y * image_height)
+            pixel_landmark_x = int(landmark.x * image_width)
+            pixel_landmark_y = int(landmark.y * image_height)
 
             # Append the pixel coordinates to the landmark list
-            self.pixel_landmarks.append([landmark_x, landmark_y])
+            self.pixel_landmarks.append([pixel_landmark_x, pixel_landmark_y])
 
     def convert_to_relative_and_normalize(self):
         min_landmark_x = min(self.pixel_landmarks, key=lambda landmark: landmark[0])[0]

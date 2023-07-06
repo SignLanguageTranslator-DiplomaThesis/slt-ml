@@ -1,0 +1,32 @@
+Model: "sign_classifier"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ dense (Dense)               (None, 128)               5504      
+                                                                 
+ batch_normalization (BatchN  (None, 128)              512       
+ ormalization)                                                   
+                                                                 
+ dropout (Dropout)           (None, 128)               0         
+                                                                 
+ dense_1 (Dense)             (None, 64)                8256      
+                                                                 
+ batch_normalization_1 (Batc  (None, 64)               256       
+ hNormalization)                                                 
+                                                                 
+ dropout_1 (Dropout)         (None, 64)                0         
+                                                                 
+ dense_2 (Dense)             (None, 32)                2080      
+                                                                 
+ batch_normalization_2 (Batc  (None, 32)               128       
+ hNormalization)                                                 
+                                                                 
+ dropout_2 (Dropout)         (None, 32)                0         
+                                                                 
+ output_sign_label (Dense)   (None, 29)                957       
+                                                                 
+=================================================================
+Total params: 17,693
+Trainable params: 17,245
+Non-trainable params: 448
+_________________________________________________________________

@@ -18,7 +18,7 @@ class CsvParser:
     @staticmethod
     def logging_csv(mode, number, landmark_list):
         if mode == constants.SAVE_SNAPSHOT_MODE and number != -1:
-            with open(constants.DATASET_PATH, 'a', newline="") as f:
+            with open(constants.TEST_DATASET_PATH, 'a', newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow([number, *landmark_list])
         return

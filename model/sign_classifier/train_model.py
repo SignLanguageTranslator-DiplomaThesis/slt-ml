@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import tensorflow as tf
+import visualkeras as vk
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
@@ -11,7 +12,7 @@ from constants import constants
 from csv_parser.csv_parser import CsvParser
 
 
-def load_dataset():
+def load_dataset(path):
     """
     Load the dataset of hand landmark coordinates and labels from the CSV file.
 
@@ -22,21 +23,22 @@ def load_dataset():
     :return tuple: The created datasets.
     """
 
-    x_dataset = np.loadtxt(constants.DATASET_PATH,
+    x_dataset = np.loadtxt(path,
                            delimiter=',',
                            dtype='float32',
                            usecols=list(range(1, constants.NO_OF_LANDMARK_COORDINATES + 1)))
 
-    y_dataset = np.loadtxt(constants.DATASET_PATH,
+    y_dataset = np.loadtxt(path,
                            delimiter=',',
                            dtype='int32',
                            usecols=0)
     return x_dataset, y_dataset
 
 
-class Model:
+class SLRModel:
     def __init__(self):
         self.history = None
+        self.confusion_matrix = None
         self.model = self.build()
 
     @staticmethod
@@ -48,21 +50,11 @@ class Model:
         """
 
         model = tf.keras.models.Sequential([
-            # input shape of the model - the number of landmark coordinates
             tf.keras.layers.Input(shape=(constants.NO_OF_LANDMARK_COORDINATES,), name="input_landmark_coordinates"),
-            # performs a linear transformation on the input data, followed by the ReLU activation function to
-            # introduce non-linearity
             tf.keras.layers.Dense(128, activation='relu', use_bias=True),
-            # normalizes the activations of the previous layer at each batch,
-            # which helps improve training speed and generalization
             tf.keras.layers.BatchNormalization(),
-            # randomly drops out some input units with a probability of 0.2 during training,
-            # which helps to prevent over-fitting
             tf.keras.layers.Dropout(0.2),
             tf.keras.layers.Dense(64, activation='relu', use_bias=True),
-            tf.keras.layers.BatchNormalization(),
-            tf.keras.layers.Dropout(0.2),
-            tf.keras.layers.Dense(32, activation='relu', use_bias=True),
             tf.keras.layers.BatchNormalization(),
             tf.keras.layers.Dropout(0.2),
             tf.keras.layers.Dense(constants.NO_OF_CLASSES, activation='softmax', name="output_sign_label")
@@ -94,6 +86,8 @@ class Model:
                                   show_shapes=True,
                                   show_layer_names=True,
                                   show_layer_activations=True)
+
+        vk.layered_view(self.model, legend=True, draw_volume=True, to_file=constants.LAYERED_STYLE_ARCHITECTURE_PATH)
 
     def train(self, x_train, y_train, x_test, y_test):
         """
@@ -146,11 +140,11 @@ class Model:
         with open(constants.CLASSIFICATION_REPORT_PATH, mode="w") as file:
             file.write('Validation loss: %.5f\n' % loss)
             file.write('Validation accuracy: %.5f\n' % accuracy)
-            file.write("\n\n\n")
+            file.write("\n\n")
 
     def save(self):
         self.save_architecture()
-        self.model.save(constants.MODEL_SAVE_PATH, include_optimizer=False)
+        self.model.save(constants.MODEL_SAVE_PATH, include_optimizer=True)
 
     def save_as_tflite(self):
         """
@@ -183,6 +177,7 @@ class Model:
         # Obtain the index of the class with the highest predicted probability for each sample, which is the
         # predicted class label
         y_pred = np.argmax(y_pred_prob, axis=1)
+        np.savetxt(constants.PREDICTIONS_PATH, y_pred, delimiter=",", fmt="%d")
         return y_pred
 
     def plot_results(self):
@@ -203,87 +198,77 @@ class Model:
         plt.tight_layout()
         plt.savefig(constants.ACCURACY_LOSS_PLOT_PATH)
 
-    @staticmethod
-    def generate_confusion_matrix(y_true, y_pred):
+    def generate_confusion_matrix(self, y_actual, y_pred):
         """
         Generates the confusion matrix that is used to define the performance of the classification algorithm.
 
-        :param numpy.ndarray y_true: True labels.
+        :param numpy.ndarray y_actual: Actual labels.
         :param numpy.ndarray y_pred: Predicted labels.
         """
 
-        labels_indices = sorted(list(set(y_true)))
+        labels_indices = sorted(list(set(y_actual)))
         labels = CsvParser().read_sign_labels()
 
-        # Compute the confusion matrix using the true labels (y_true), predicted labels (y_pred),
+        # Compute the confusion matrix using the actual labels (y_actual), predicted labels (y_pred),
         # and the list of label indices (labels_indices)
-        confusion_matrix_data = confusion_matrix(y_true, y_pred, labels=labels_indices)
+        self.confusion_matrix = confusion_matrix(y_actual, y_pred, labels=labels_indices)
 
         # Create a Pandas DataFrame from the confusion matrix data.
         # It sets the row and column labels to the actual label names (labels).
-        df_cmx = pd.DataFrame(confusion_matrix_data, index=labels, columns=labels)
+        df_cmx = pd.DataFrame(self.confusion_matrix, index=labels, columns=labels)
 
         # Create a heatmap plot of the confusion matrix using seaborn and matplotlib
         fig, ax = plt.subplots(figsize=(7, 6))
         sns.heatmap(df_cmx, annot=True, fmt='g', square=False, cmap='coolwarm')
-        ax.set_ylim(len(set(y_true)), 0)
+        ax.set_ylim(len(set(y_actual)), 0)
         plt.savefig(constants.CONFUSION_MATRIX_PATH)
 
+    def calculate_confusion_matrix_values(self, class_index):
+        """
+        :param class_index: Index of the class for which metrics are to be calculated
+        :return: TP, FP, TN, FN for the class
+        """
+
+        true_positive = self.confusion_matrix[class_index, class_index]
+        false_positive = self.confusion_matrix[:, class_index].sum() - true_positive
+        false_negative = self.confusion_matrix[class_index, :].sum() - true_positive
+        true_negative = self.confusion_matrix.sum() - (false_positive + false_negative + true_positive)
+
+        with open(constants.CLASSIFICATION_REPORT_PATH, mode="a") as file:
+            file.write("True Positive (TP): %d\n" % true_positive)
+            file.write("False Positive (FP): %d\n" % false_positive)
+            file.write("True Negative (TN): %d\n" % true_negative)
+            file.write("False Negative (FN): %d\n" % false_negative)
+            file.write("\n\n")
+
     @staticmethod
-    def generate_classification_report(y_test, y_pred):
+    def generate_classification_report(y_actual, y_pred):
         """
         Generate the Classification Report to a text file.
 
-        :param numpy.ndarray y_test: Set of labels for all the data in x_test.
+        :param numpy.ndarray y_actual: Set of labels for all the data in x_test.
         :param numpy.ndarray y_pred: Predicted labels.
         """
 
         labels = CsvParser().read_sign_labels()
         with open(constants.CLASSIFICATION_REPORT_PATH, mode="a") as file:
             file.write("Classification Report\n\n\n")
-            file.write(classification_report(y_test, y_pred, target_names=labels))
-
-
-def classify_test_dataset_with_tflite(x_test):
-    """
-    Use a TFLite interpreter to classify the test dataset by performing inference on the TFLite model.
-
-    :param numpy.ndarray x_test: Test dataset.
-    """
-
-    # Create a TFLite interpreter and allocate tensors
-    interpreter = tf.lite.Interpreter(model_path=constants.TFLITE_SAVE_PATH)
-    interpreter.allocate_tensors()
-
-    # Get input and output details from the interpreter
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-
-    # Set the input tensor with the first sample from the test dataset
-    interpreter.set_tensor(input_details[0]['index'], np.array([x_test[0]]))
-
-    # Invoke the interpreter to perform inference
-    interpreter.invoke()
-
-    # Get the output tensor from the interpreter
-    tflite_results = interpreter.get_tensor(output_details[0]['index'])
-
-    # Print the results
-    print(np.squeeze(tflite_results))
-    print(np.argmax(np.squeeze(tflite_results)))
+            file.write(classification_report(y_actual, y_pred, target_names=labels, digits=4))
 
 
 def main():
     # load the dataset
-    x_dataset, y_dataset = load_dataset()
+    x_dataset, y_dataset = load_dataset(constants.DATASET_PATH)
 
     # Split the dataset into training and test sets
-    x_train, x_test, y_train, y_test = train_test_split(x_dataset,
-                                                        y_dataset,
-                                                        train_size=constants.TRAIN_SIZE,
-                                                        random_state=constants.RANDOM_SEED)
+    x_train, _, y_train, _ = train_test_split(x_dataset,
+                                              y_dataset,
+                                              train_size=constants.TRAIN_SIZE,
+                                              random_state=constants.RANDOM_SEED)
 
-    model = Model()
+    x_test, y_test = load_dataset(constants.TEST_DATASET_PATH)
+
+    model = SLRModel()
     model.train(x_train, y_train, x_test, y_test)
     model.evaluate(x_test, y_test)
     model.save()
@@ -292,12 +277,11 @@ def main():
 
     model.plot_results()
     model.generate_confusion_matrix(y_test, y_pred)
+    model.calculate_confusion_matrix_values(2)  # 2 is the index for letter 'C'
     model.generate_classification_report(y_test, y_pred)
 
     model.save_as_tflite()
     model.save_as_js()
-
-    classify_test_dataset_with_tflite(x_test)
 
 
 if __name__ == "__main__":

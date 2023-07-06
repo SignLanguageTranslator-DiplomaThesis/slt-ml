@@ -1,0 +1,31 @@
+        model = tf.keras.models.Sequential([
+            # Input layer
+            tf.keras.layers.Input(shape=(constants.NO_OF_LANDMARK_COORDINATES,), name="input_landmark_coordinates"),
+
+            # First dense layer with L2 regularization and increased number of neurons
+            tf.keras.layers.Dense(256, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(0.01),
+                                  use_bias=True),
+
+            # Batch normalization and dropout
+            tf.keras.layers.BatchNormalization(),
+            tf.keras.layers.Dropout(0.3),
+
+            # Second dense layer with L2 regularization
+            tf.keras.layers.Dense(128, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(0.01),
+                                  use_bias=True),
+
+            # Batch normalization and dropout
+            tf.keras.layers.BatchNormalization(),
+            tf.keras.layers.Dropout(0.3),
+
+            # Additional dense layer
+            tf.keras.layers.Dense(64, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(0.01),
+                                  use_bias=True),
+
+            # Batch normalization and dropout
+            tf.keras.layers.BatchNormalization(),
+            tf.keras.layers.Dropout(0.3),
+
+            # Output layer
+            tf.keras.layers.Dense(constants.NO_OF_CLASSES, activation='softmax', name="output_sign_label")
+        ], name="sign_classifier")

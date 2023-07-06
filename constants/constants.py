@@ -16,13 +16,14 @@ CAPTURE_FRAME_HEIGHT = 540
 RANDOM_SEED = 42
 # The size of the training dataset, as a percentage from the total dataset
 TRAIN_SIZE = 0.8
-NO_OF_EPOCHS = 500
+NO_OF_EPOCHS = 120
 BATCH_SIZE = 128
 
 SAVED_MODELS_DIR = 'model/sign_classifier/save'
 
 # Paths to the datasets
 DATASET_PATH = 'model/sign_classifier/dataset/sign_dataset.csv'
+TEST_DATASET_PATH = 'model/sign_classifier/dataset/test_dataset.csv'
 
 SIGN_LABELS_PATH = "model/sign_classifier/dataset/sign_label.csv"
 
@@ -36,6 +37,8 @@ CONFUSION_MATRIX_PATH = 'model/sign_classifier/info/confusion_matrix.png'
 ACCURACY_LOSS_PLOT_PATH = 'model/sign_classifier/info/results.png'
 CLASSIFICATION_REPORT_PATH = 'model/sign_classifier/info/classification_report.txt'
 NEURAL_NETWORK_VISUALIZATION_PATH = 'model/sign_classifier/info/sign_classifier_model.png'
+LAYERED_STYLE_ARCHITECTURE_PATH = 'model/sign_classifier/info/layered_architecture.png'
+PREDICTIONS_PATH = 'model/sign_classifier/info/predictions.csv'
 
 # Define the number of classes (labels) in the dataset - 26 letters in the American Alphabet + space
 NO_OF_CLASSES = 29
@@ -56,7 +59,6 @@ ESC_KEY = 27
 
 # IMAGE DATASET
 TRAIN_DATASET_PATH = r'C:\Users\denis\OneDrive\Documents\UTCN\licenta\dataset\asl'
-TEST_DATASET_PATH = r'C:\Users\denis\OneDrive\Documents\UTCN\licenta\dataset\asl_alphabet_test\asl_alphabet_test'
 
 LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
            'U', 'V', 'W', 'X', 'Y', 'Z']

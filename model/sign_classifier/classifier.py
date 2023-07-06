@@ -4,7 +4,7 @@ import tensorflow as tf
 from constants import constants
 
 
-class SignClassifier(object):
+class SignLanguagePredictor(object):
 
     """
     The __init__ method initializes the TensorFlow Lite interpreter with the pre-trained model and sets the input
@@ -41,7 +41,7 @@ class SignClassifier(object):
     - result_index finds the index of the highest value in the output tensor, which represents the predicted sign 
     language gesture.
     """
-    def classify(self, landmark_list):
+    def predict(self, landmark_list):
         input_tensor_index = self.input_details[0]['index']
         self.interpreter.set_tensor(input_tensor_index, np.array([landmark_list], dtype=np.float32))
         self.interpreter.invoke()

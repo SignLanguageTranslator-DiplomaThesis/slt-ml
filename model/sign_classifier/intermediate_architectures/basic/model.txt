@@ -1,0 +1,5 @@
+        model = tf.keras.models.Sequential([
+            tf.keras.layers.Input(shape=(42,), name="input_landmark_coordinates"),
+            tf.keras.layers.Dense(10, activation='linear'),
+            tf.keras.layers.Dense(29, activation='softmax', name="output_sign_label")
+        ], name="sign_classifier")
