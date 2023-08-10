@@ -76,8 +76,8 @@ activated and located in the main directory of the project, run the following co
 
 The web application can be accessed at https://slt-frontend-flkvbjjfeqey.a.run.app. After the user gets registered and then authenticates in their respective account, they will get to the home page of the application:
 
-<img src="https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/homepage.png" width="50%" height="50%">
+<img src="https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/homepage.png">
    
 By pressing the Chat button, the user will be redirected to the Chat page of the application. In this window, the user can start to perform sign language gestures to the camera, which will be interpreted by the model and then converted to text.
 
-<img src="https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/hello_chat.png" width="50%" height="50%">
+<img src="https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/hello_chat.png">
