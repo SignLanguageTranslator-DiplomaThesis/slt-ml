@@ -1,7 +1,9 @@
 # Machine Learning Model for Sign Language Translator
 
-Model that recognizes and classifies various sign language gestures.
+Machine Learning model for the **Sign Language Recognition** task, that translates sign language into text. The model is integrated at the core of a web application (Node.js/Angular), serving as a communication bridge between the hearing-impaired community and those unfamiliar with sign language. Sign language gestures are processed from video capture and converted into text.
 
+The module diagram of the web application can be observed below:
+![alt text](https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/conceptual_diagram.jpeg)
 ### How to run
 
 1. Create a virtual environment and install dependencies
@@ -38,11 +40,23 @@ Model that recognizes and classifies various sign language gestures.
     ```
     python main.py
     ```
-    The application has several modes, each activated by pressing the respective key:
-    - **N** - normal mode
-    - **S** - save gesture performed to `sign_dataset.csv`
-    - **L** - create a new sign gesture label
-    - **C** - choose sign gesture label to perform
+    The desktop application functions in several modes, which can be activated
+by pressing the respective keys:
+    - **N - normal mode**: In the normal mode, the application simply recognizes gestures
+performed by the left and right hand.
+    - **S - save gesture performed to `sign_dataset.csv`**: By pressing S, a snapshot of the currrent frame is
+taken, saving the 21 3D Landmarks of the hand, and new data is added to the sign
+dataset.
+    - **L - create a new sign gesture label**: By pressing L, a new window pops up, allowing
+the user to create a new sign language gesture label for the dataset. This allows
+the model to be trained on new gestures in the future.
+![alt text](https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/select_label.png)
+![alt text](https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/select_label_dropdown_open.png)
+   - **C - choose sign gesture label to perform**: By pressing C, a new window pops
+up, allowing the user to choose an existing sign language label from the dataset.
+Moving forwards, all snapshots of the hand that will be taken will correspond to
+this selected sign language gesture label.
+![alt text](https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/create_label.png)
 
 3. Train the model
     
