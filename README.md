@@ -4,6 +4,9 @@ Machine Learning model for the **Sign Language Recognition** task, that translat
 
 The module diagram of the web application can be observed below:
 ![alt text](https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/conceptual_diagram.jpeg)
+
+More information about the project can be found in the ```project_synthesis.pdf``` and ```project_presentation.pdf``` files under the ```documentation``` directory.
+
 ### How to run
 
 1. Create a virtual environment and install dependencies
