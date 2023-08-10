@@ -50,13 +50,13 @@ dataset.
     - **L - create a new sign gesture label**: By pressing L, a new window pops up, allowing
 the user to create a new sign language gesture label for the dataset. This allows
 the model to be trained on new gestures in the future.
-![alt text](https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/select_label.png)
-![alt text](https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/select_label_dropdown_open.png)
+<img src="https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/select_label.png" width="50%" height="50%">
+<img src="https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/select_label_dropdown_open.png" width="50%" height="50%">
    - **C - choose sign gesture label to perform**: By pressing C, a new window pops
 up, allowing the user to choose an existing sign language label from the dataset.
 Moving forwards, all snapshots of the hand that will be taken will correspond to
 this selected sign language gesture label.
-![alt text](https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/create_label.png)
+<img src="https://github.com/SignLanguageTranslator-DiplomaThesis/slt-ml/blob/main/screenshots/create_label.png" width="50%" height="50%">
 
 3. Train the model
     
